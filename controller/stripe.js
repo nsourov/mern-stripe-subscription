@@ -34,11 +34,33 @@ async function getAllProductsAndPlans(req, res) {
 }
 
 async function createProduct(req, res) {
-  const response = await stripe.products.create({
-    name: req.body.productName,
-    type: "service"
-  });
-  return res.json(response);
+  try {
+    // REF: https://stripe.com/docs/api/products/create
+    const response = await stripe.products.create({
+      name: req.body.productName,
+      type: "service"
+    });
+    return res.json(response);
+  } catch (error) {
+    res.json({ error: error.message });
+  }
 }
 
-module.exports = { getAllProductsAndPlans, createProduct };
+async function createPlan(req, res) {
+  try {
+    // REF: https://stripe.com/docs/api/plans/create
+    const response = await stripe.plans.create({
+      nickname: req.body.planName,
+      amount: toStripeAmount(req.body.planAmount),
+      interval: req.body.planInterval,
+      interval_count: parseInt(req.body.planIntervalNumber),
+      product: req.body.productId,
+      currency: "USD"
+    });
+    return res.json(response);
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+}
+
+module.exports = { getAllProductsAndPlans, createProduct, createPlan };
