@@ -3,7 +3,8 @@ const express = require("express");
 const {
   getAllProductsAndPlans,
   createProduct,
-  createPlan
+  createPlan,
+  createCustomerAndSubscription
 } = require("./controller/stripe");
 
 const router = express.Router();
@@ -16,5 +17,8 @@ router.post("/createProduct", createProduct);
 
 // Create Plan
 router.post("/createPlan", createPlan);
+
+// Process the subscription
+router.post("/processPayment", createCustomerAndSubscription);
 
 module.exports = router;

@@ -63,4 +63,29 @@ async function createPlan(req, res) {
   }
 }
 
-module.exports = { getAllProductsAndPlans, createProduct, createPlan };
+async function createCustomerAndSubscription(req, res) {
+  try {
+    const customer = await stripe.customers.create({
+      source: req.body.stripeToken,
+      email: req.body.customerEmail
+    });
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [
+        {
+          plan: req.body.planId
+        }
+      ]
+    });
+    return res.json(subscription);
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+}
+
+module.exports = {
+  getAllProductsAndPlans,
+  createProduct,
+  createPlan,
+  createCustomerAndSubscription
+};
