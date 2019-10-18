@@ -4,20 +4,22 @@ const { toStripeAmount, toUSD } = require("../utils/format-number");
 
 async function getAllProductsAndPlans(req, res) {
   try {
+    // Get the products and plan from stripe API
     const [products, plans] = await Promise.all([
       stripe.products.list({}),
       stripe.plans.list({})
     ]);
-    const sortPlans = plans.data.sort((a, b) => {
-      /* Sort plans in ascending order of price (amount)
+    const sortPlans = plans
+      .sort((a, b) => {
+        // Sort plans in ascending order of price (amount)
         return a.amount - b.amount;
       })
       .map(plan => {
-        /* Format plan price (amount) */
-      amount = toUSD(plan.amount);
-      return { ...plan, amount };
-    });
-
+        // Format plan price (amount)
+        amount = toUSD(plan.amount);
+        return { ...plan, amount };
+      });
+    // Don't know now. Will figure that out and write here
     products.data.forEach(product => {
       const filteredPlans = sortPlans.filter(plan => {
         return plan.product === product.id;
@@ -31,4 +33,12 @@ async function getAllProductsAndPlans(req, res) {
   }
 }
 
-module.exports = { getAllProductsAndPlans };
+async function createProduct(req, res) {
+  const response = await stripe.products.create({
+    name: req.body.productName,
+    type: "service"
+  });
+  return res.json(response);
+}
+
+module.exports = { getAllProductsAndPlans, createProduct };
