@@ -9,7 +9,7 @@ async function getAllProductsAndPlans(req, res) {
       stripe.products.list({}),
       stripe.plans.list({})
     ]);
-    const sortPlans = plans
+    const sortPlans = plans.data
       .sort((a, b) => {
         // Sort plans in ascending order of price (amount)
         return a.amount - b.amount;
@@ -19,7 +19,7 @@ async function getAllProductsAndPlans(req, res) {
         amount = toUSD(plan.amount);
         return { ...plan, amount };
       });
-    // Don't know now. Will figure that out and write here
+    // This filter is to get the product which is associated with the plans we wanted to use
     products.data.forEach(product => {
       const filteredPlans = sortPlans.filter(plan => {
         return plan.product === product.id;
