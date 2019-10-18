@@ -10,6 +10,6 @@
     "stripe": "^7.10.0"
   },
   "scripts": {
-    "start": "nodemon index.js"
+    "start:server": "nodemon index.js"
   }
 }
