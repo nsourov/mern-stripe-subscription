@@ -2,13 +2,10 @@ require("dotenv").config({});
 const stripe = require("stripe")(process.env.STRIPE_API_KEY);
 const { toStripeAmount, toUSD } = require("../utils/format-number");
 
-async function getAllProductsAndPlans(req, res) {
+async function getPlans(req, res) {
   try {
-    // Get the products and plan from stripe API
-    const [products, plans] = await Promise.all([
-      stripe.products.list({}),
-      stripe.plans.list({})
-    ]);
+    // Get plan from stripe API
+    const plans = await stripe.plans.list({});
     const sortPlans = plans.data
       .sort((a, b) => {
         // Sort plans in ascending order of price (amount)
@@ -19,15 +16,7 @@ async function getAllProductsAndPlans(req, res) {
         amount = toUSD(plan.amount);
         return { ...plan, amount };
       });
-    // This filter is to get the product which is associated with the plans we wanted to use
-    products.data.forEach(product => {
-      const filteredPlans = sortPlans.filter(plan => {
-        return plan.product === product.id;
-      });
-      product.plans = filteredPlans;
-    });
-
-    return res.json(products);
+    return res.json(sortPlans);
   } catch (error) {
     res.json({ error: error.message });
   }
@@ -84,7 +73,7 @@ async function createCustomerAndSubscription(req, res) {
 }
 
 module.exports = {
-  getAllProductsAndPlans,
+  getPlans,
   createProduct,
   createPlan,
   createCustomerAndSubscription

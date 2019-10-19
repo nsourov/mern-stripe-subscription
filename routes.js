@@ -1,7 +1,7 @@
 const express = require("express");
 
 const {
-  getAllProductsAndPlans,
+  getPlans,
   createProduct,
   createPlan,
   createCustomerAndSubscription
@@ -10,7 +10,7 @@ const {
 const router = express.Router();
 
 // Place all routes here
-router.get("/", getAllProductsAndPlans);
+router.get("/", getPlans);
 
 // Create Product
 router.post("/createProduct", createProduct);
