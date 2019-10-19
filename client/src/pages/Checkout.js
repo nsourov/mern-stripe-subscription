@@ -13,14 +13,17 @@ function Checkout({
   }
 }) {
   const [message, setMessage] = useState("");
-  const onSubmit = data => {
+  const [loading, setLoading] = useState(false);
+  const onSubmit = async data => {
     const body = {
       ...data,
       planId
     };
-    const res = processPayment(body);
+    setLoading(true);
+    const res = await processPayment(body);
     if (res.status === 200) {
       setMessage("Thanks for the subscription");
+      setLoading(false);
     }
   };
   return (
@@ -30,7 +33,7 @@ function Checkout({
           <div className="success">{message}</div>
           <StripeProvider apiKey={process.env.REACT_APP_STRIPE_PUBLIC_KEY}>
             <Elements>
-              <CheckoutForm onSubmit={onSubmit} />
+              <CheckoutForm onSubmit={onSubmit} loading={loading} />
             </Elements>
           </StripeProvider>
         </Col>

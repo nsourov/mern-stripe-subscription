@@ -84,7 +84,7 @@ function CheckoutForm(props) {
         <div className="error" role="alert">
           {errorMessage}
         </div>
-        <button>Pay</button>
+        <button>{props.loading ? "Processing payment" : "Pay"}</button>
       </form>
     </div>
   );
